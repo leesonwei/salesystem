@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sl.dao.coastaccount.CoastAccountMapper">
+  <select id="getCoastAccountLogCount" parameterType="map" resultType="int">
+    select count(*) from user_coastaccount_log_201404
+    where userId=#{userId}     
+      <if test="queryStartTime != null and queryStartTime != '' and queryEndTime != null and queryEndTime != ''">
+         and <![CDATA[actionTime<=#{queryEndTime} and actionTime>=#{queryStartTime}]]>
+      </if>
+  </select>
+  <select id="getCoastAccountLogList" parameterType="map" resultType="UserCoastAccountLog">
+    select*from user_coastaccount_log_201404
+     where userId=#{userId}    
+      <if test="queryStartTime != null and queryStartTime != '' and queryEndTime != null and queryEndTime != ''">
+         and <![CDATA[actionTime<=#{queryEndTime} and actionTime>=#{queryStartTime}]]>
+      </if>
+      order by actionTime desc limit #{starNum},#{pageSize}
+     
+  </select>
+  <insert id="add" parameterType="userCoastAccountLog">
+     insert into user_coastaccount_log_201404(userId,actionTime,actionDesc,
+        actionType,repeatIn,repeatOut,repeatBalance)
+     values(#{userId},#{actionTime},#{actionDesc},#{actionType},#{repeatIn},#{repeatOut},#{repeatBalance})
+  </insert>
+</mapper>

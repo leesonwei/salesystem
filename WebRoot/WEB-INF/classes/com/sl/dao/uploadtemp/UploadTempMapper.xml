@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sl.dao.uploadtemp.UploadTempMapper">
+
+    <!-- 获取临时文件目录清单 -->
+    <select id="getUploadTempList" parameterType="UploadTemp" resultType="UploadTemp">
+          select * from uploadtemp
+          <trim prefix="where" prefixOverrides="and | or">
+               <if test="uploader !=null"> and uploader=#{uploader}</if>
+               <if test="uploadType !=null"> and uploadType=#{uploadType}</if>
+               <if test="uploadFilePath !=null"> and uploadFilePath=#{uploadFilePath}</if>
+          </trim>
+    </select>
+    
+    <!-- 添加临时文件目录 -->
+    <insert id="addUploadTemp" parameterType="UploadTemp">
+         insert into uploadtemp (uploader,uploadType,uploadFilePath)
+         values(#{uploader},#{uploadType},#{uploadFilePath})
+    </insert>
+         
+    <!-- 删除临时文件目录 -->
+    <delete id="deleteUploadTemp" parameterType="UploadTemp">
+          delete from uploadtemp
+           <trim prefix="where" prefixOverrides="and | or">
+               <if test="uploader !=null"> and uploader=#{uploader}</if>
+               <if test="uploadType !=null"> and uploadType=#{uploadType}</if>
+               <if test="uploadFilePath !=null"> and uploadFilePath=#{uploadFilePath}</if>
+           </trim>
+    </delete>
+
+
+
+</mapper>

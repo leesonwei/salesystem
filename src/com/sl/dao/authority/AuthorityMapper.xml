@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sl.dao.authority.AuthorityMapper">
+
+    <!-- 根据角色id获取权限列表 -->
+    <select id="getList" parameterType="Authority" resultType="Authority">
+          select * from au_authority
+          where roleId=#{roleId}
+    </select>
+    
+    <!-- 根据角色id和功能表id获取权限 -->
+    <select id="getAuthority" parameterType="Authority" resultType="Authority">
+          select * from au_authority
+          where roleId=#{roleId} and functionId=#{functionId}
+    </select>
+    
+    <!-- 添加权限 -->
+    <insert id="addAuthority" parameterType="Authority">
+          insert into au_authority (roleId,functionId,userTypeId,creationTime,createdBy)
+          values(#{roleId},#{functionId},#{userTypeId},#{creationTime},#{createdBy})
+    </insert>
+    
+    <!-- 修改权限 -->
+    <update id="modifyAuthority" parameterType="Authority">
+          update au_authority
+          <trim prefix="set" suffixOverrides="," suffix="where id=#{id}">
+                <if test="roleId !=null">roleId=#{roleId},</if>
+                <if test="functionId !=null">functionId=#{functionId},</if>
+                <if test="userTypeId !=null">userTypeId=#{userTypeId},</if>
+                <if test="creationTime !=null">creationTime=#{creationTime},</if>
+                <if test="createdBy !=null">createdBy=#{createdBy}</if>
+          </trim>
+    </update>
+    
+    <!-- 删除权限 -->
+    <delete id="deleteAuthority" parameterType="Authority">
+         delete from au_authority
+         <trim prefix="where" prefixOverrides="and | or">
+              <if test="id !=null">and id=#{id}</if>
+              <if test="roleId !=null"> and roleId=#{roleId}</if>
+         </trim>
+    </delete>
+    
+
+
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context.xsd
+	">
+	
+	<!-- 扫描service包 -->
+    <context:component-scan base-package="com.sl.service" />
+    
+    <!-- 扫描dao包 -->
+    <context:component-scan base-package="com.sl.dao" />
+    
+    <!-- 注解驱动 -->
+    <context:annotation-config />
+    <tx:annotation-driven/>
+	
+	<!-- 读取jdbc.properties配置文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	
+	<!-- JNDI获取数据源(使用dbcp连接池) -->  
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton">
+		    <property name="driverClassName" value="${driverClassName}"/>
+		    <property name="url" value="${url}"/>
+		    <property name="username" value="${uname}"/>
+		    <property name="password" value="${password}"/>
+			<property name="initialSize" value="${initialSize}"/>
+			<property name="maxActive" value="${maxActive}"/>
+			<property name="maxIdle" value="${maxIdle}"/>
+			<property name="minIdle" value="${minIdle}"/>
+			<property name="maxWait" value="${maxWait}"/>
+			<property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}"/>
+			<property name="removeAbandoned" value="${removeAbandoned}"/>			
+			<property name= "testWhileIdle" value="true"/>
+			<property name= "testOnBorrow" value="false"/>
+			<property name= "testOnReturn" value="false"/>
+			<property name= "validationQuery" value="select 1"/>
+			<property name= "timeBetweenEvictionRunsMillis" value="60000"/>
+			<property name= "numTestsPerEvictionRun" value="${maxActive}"/>
+	</bean> 
+	
+	<!-- 事务管理 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	     <property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 配置mybatis SqlSessionFactoryBean -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	     <property name="dataSource" ref="dataSource" /> 
+	     <property name="configLocation" value="classpath:mybatis-config.xml" />  
+	</bean>
+	
+	<!-- AOP事务处理  -->
+	<aop:aspectj-autoproxy />
+	<aop:config proxy-target-class="true">
+	      <aop:pointcut expression="execution(* *com.sl.service..*(..))" id="transService"/>
+	      <aop:advisor advice-ref="txAdvice" pointcut-ref="transService" />
+	</aop:config>
+	 <!-- 规则 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+	      <tx:attributes>
+	           <tx:method name="sl*" propagation="REQUIRED" rollback-for="Exception" />
+	           <tx:method name="*" />
+	      </tx:attributes>
+	</tx:advice>
+	
+	<!-- 映射扫描配置器: Mapper接口所在包名，Spring会自动查找其下的Mapper-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+          <property name="basePackage" value="com.sl.dao" />
+    </bean>
+	
+	<!--配置redis缓存 -->
+	<!-- <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+	      <property  name="maxActive"  value="90" />  
+	      <property  name="maxIdle"   value="5" />  
+	      <property  name="maxWait"  value="1000" />  
+	      <property  name="testOnBorrow"  value="true" /> 
+	</bean>
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="destroy" >
+	      <constructor-arg ref="jedisPoolConfig"/>
+	      <constructor-arg value="127.0.0.1"/>
+	      <constructor-arg value="6379"/>
+	</bean>
+	<bean id="redisAPI" class="com.sl.common.RedisAPI">
+	      <property name="jedisPool" ref="jedisPool"/>
+	</bean>
+	 -->
+	
+
+
+</beans>

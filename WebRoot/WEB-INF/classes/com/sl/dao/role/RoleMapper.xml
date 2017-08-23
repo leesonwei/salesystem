@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sl.dao.role.RoleMapper">
+
+    <!-- 获取角色id和角色名称 -->
+    <select id="getRoleIdAndNameList" resultMap="roleIdAndRoleNameMap" >
+         select * from au_role where isStart=1
+    </select>
+    <resultMap type="Role" id="roleIdAndRoleNameMap">
+         <result property="id" column="id" />
+         <result property="roleName" column="roleName" />
+    </resultMap>
+    
+    <!-- 获取角色列表 -->
+    <select id="getRoleList" resultType="Role">
+         select * from au_role
+    </select>
+    
+    <!-- 通过角色编码或角色名称获取角色 -->
+    <select id="getRoleByRoleCodeOrRoleName" resultType="Role" parameterType="Role">
+          select * from au_role where roleCode=#{roleCode} or roleName=#{roleName}
+    </select>
+    
+    <!-- 通过id和角色编码获取角色 -->
+    <select id="getRoleByIdAndRoleCode" parameterType="Role" resultType="Role">
+         select * from au_role
+         <trim prefix="where" prefixOverrides="and | or">
+              <if test="id !=null">
+                  and id=#{id}
+              </if>
+              <if test="roleCode !=null">
+                  and roleCode=#{roleCode}
+              </if>
+         </trim>
+    </select>
+    
+    <!-- 添加角色 -->
+    <insert id="addRole" parameterType="Role">
+         insert into au_role (roleCode,roleName,createDate,isStart,createdBy) 
+         values (#{roleCode},#{roleName},#{createDate},#{isStart},#{createdBy})
+    </insert>
+    
+    <!-- 更新角色 -->
+    <update id="modifyRole" parameterType="Role">
+         update au_role
+         <trim prefix="set" suffixOverrides="," suffix="where id=#{id}">
+                 <if test="roleCode != null"> roleCode = #{roleCode},</if>
+				 <if test="roleName != null"> roleName = #{roleName},</if>
+				 <if test="createDate != null"> createDate = #{createDate},</if>	 
+				 <if test="isStart != null"> isStart = #{isStart},</if>
+				 <if test="createdBy != null"> createdBy = #{createdBy}</if>
+         </trim>
+    </update>
+    
+    <!-- 删除角色表 -->
+    <delete id="deleteRole" parameterType="Role">
+         delete from au_role where id=#{id}
+    </delete>
+
+
+</mapper>

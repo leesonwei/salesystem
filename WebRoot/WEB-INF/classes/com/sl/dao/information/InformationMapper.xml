@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sl.dao.information.InformationMapper">
+
+   <!-- 获取信息列表 -->
+   <select id="getInformationList" resultType="Information" parameterType="Information">
+         select * from information
+         <trim prefix="where" prefixOverrides="and | or">
+              <if test="state !=null">
+                  and state=1
+              </if>
+              <if test="fileName !=null">
+                  and fileName like concat('%',#{fileName},'%')
+              </if>
+              <if test="title !=null">
+                  and title like concat('%',#{title},'%')
+              </if>
+         </trim>
+         order by publishTime desc limit #{from},#{pageSize}
+   </select>
+
+
+</mapper>

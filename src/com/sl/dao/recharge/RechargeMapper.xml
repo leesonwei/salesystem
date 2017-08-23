@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sl.dao.recharge.RechargeMapper">
+   <select id="getRechargeList" resultType="UserRecharge">
+      select*from user_recharge
+   </select>
+    <insert id="addRecharge" parameterType="UserRecharge">
+       insert into user_recharge(recharge_time,recharge_num,user_id,currency,recharge_money,note,credited_money,credited_time,audit_user,PV_rate,PV,bank_name,bank_account,platform,param)
+       values(#{recharge_time},#{recharge_num},#{user_id},#{currency},#{recharge_money},#{note},#{credited_money},#{credited_time},#{audit_user},#{PV_rate},#{PV},#{bank_name},#{bank_account},#{platform},#{param})
+    </insert>
+</mapper>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sl.dao.information2.ReplyMapper">
+    <resultMap id="result_Reply_Map" type="com.sl.pojo.Reply">
+        <id column="Reply0" property="id" />
+        <result column="Reply1" property="messageId" />
+        <result column="Reply2" property="replyContent" />
+        <result column="Reply3" property="createdBy" />
+        <result column="Reply4" property="createTime" />
+    </resultMap>
+
+    <sql id="Assist">
+        <where>
+            <foreach collection="require" item="req" separator=" ">
+                ${req.require} #{req.value}
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="updateAssist">
+        <where>
+            <foreach collection="assist.require" item="req" separator=" ">
+                ${req.require} #{req.value}
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="reply_Column">
+        reply.id as Reply0
+        ,reply.messageId as Reply1
+        ,reply.replyContent as Reply2
+        ,reply.createdBy as Reply3
+        ,reply.createTime as Reply4
+    </sql>
+
+    <select id="getReplyRowCount" parameterType="com.sl.common.Assist" resultType="java.lang.Long">
+        select count(id) from reply
+        <if test="require!=null"><include refid="Assist" /></if>
+    </select>
+    <select id="selectReply" parameterType="com.sl.common.Assist"  resultMap="result_Reply_Map">
+        select  <if test="distinct !=null">${distinct}</if>
+        <choose>
+            <when test="resultColumn!=null">${resultColumn}</when>
+            <otherwise>
+        <include refid="reply_Column" /> 
+            </otherwise>
+        </choose>
+        from reply
+        <if test="require!=null"><include refid="Assist" /></if>
+        <if test="order !=null">${order}</if>
+        <if test="rowSize !=null"> LIMIT #{rowSize} <if test="startRow !=null"> OFFSET #{startRow}</if></if>
+    </select> 
+
+    <select id="selectReplyById" parameterType="java.lang.Long" resultMap="result_Reply_Map">
+        select 
+            <include refid="reply_Column" /> 
+        from reply
+        where reply.id = #{id}
+    </select> 
+
+
+    <insert id="insertReply" parameterType="com.sl.pojo.Reply" useGeneratedKeys="true" keyProperty="id">
+        insert into reply(id,messageId,replyContent,createdBy,createTime) 
+        values(#{id},#{messageId},#{replyContent},#{createdBy},#{createTime})
+    </insert>
+
+    <insert id="insertNonEmptyReply" parameterType="com.sl.pojo.Reply" useGeneratedKeys="true" keyProperty="id">
+        insert into reply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="messageId != null">messageId,</if>
+            <if test="replyContent != null">replyContent,</if>
+            <if test="createdBy != null">createdBy,</if>
+            <if test="createTime != null">createTime,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null"> #{id},</if>
+            <if test="messageId != null"> #{messageId},</if>
+            <if test="replyContent != null"> #{replyContent},</if>
+            <if test="createdBy != null"> #{createdBy},</if>
+            <if test="createTime != null"> #{createTime},</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteReplyById" parameterType="java.lang.Long">
+        delete from reply
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteReply" parameterType="com.sl.common.Assist">
+        delete from reply
+        <if test="require!=null"><include refid="Assist" /></if>
+    </delete>
+
+    <update id="updateReplyById" parameterType="com.sl.pojo.Reply">
+        update reply set
+            messageId=#{messageId}
+            ,replyContent=#{replyContent}
+            ,createdBy=#{createdBy}
+            ,createTime=#{createTime}
+        where id=#{id}
+    </update>
+
+    <update id="updateNonEmptyReplyById" parameterType="com.sl.pojo.Reply">
+        update reply
+        <set>
+            <if test="messageid != null">
+                messageId=#{messageId},
+            </if>
+            <if test="replycontent != null">
+                replyContent=#{replyContent},
+            </if>
+            <if test="createdby != null">
+                createdBy=#{createdBy},
+            </if>
+            <if test="createtime != null">
+                createTime=#{createTime},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="updateReply" parameterType="map">
+        update reply
+        <set>
+                id=#{enti.id},
+                messageId=#{enti.messageId},
+                replyContent=#{enti.replyContent},
+                createdBy=#{enti.createdBy},
+                createTime=#{enti.createTime},
+        </set>
+        <if test="assist.require!=null"><include refid="updateAssist" /></if>
+    </update>
+
+    <update id="updateNonEmptyReply" parameterType="map">
+        update reply
+        <set>
+            <if test="enti.id != null">
+                id=#{enti.id},
+            </if>
+            <if test="enti.messageid != null">
+                messageId=#{enti.messageId},
+            </if>
+            <if test="enti.replycontent != null">
+                replyContent=#{enti.replyContent},
+            </if>
+            <if test="enti.createdby != null">
+                createdBy=#{enti.createdBy},
+            </if>
+            <if test="enti.createtime != null">
+                createTime=#{enti.createTime},
+            </if>
+        </set>
+        <if test="assist.require!=null"><include refid="updateAssist" /></if>
+    </update>
+
+</mapper>

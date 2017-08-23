@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sl.dao.information2.GonggaoMapper">
+    <resultMap id="result_Affiche_Map" type="com.sl.pojo.Affiche">
+        <id column="Affiche0" property="id" />
+        <result column="Affiche1" property="code" />
+        <result column="Affiche2" property="title" />
+        <result column="Affiche3" property="content" />
+        <result column="Affiche4" property="publisher" />
+        <result column="Affiche5" property="publishtime" />
+        <result column="Affiche6" property="startTime" />
+        <result column="Affiche7" property="endTime" />
+    </resultMap>
+
+    <sql id="Assist">
+        <where>
+            <foreach collection="require" item="req" separator=" ">
+                ${req.require} #{req.value}
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="updateAssist">
+        <where>
+            <foreach collection="assist.require" item="req" separator=" ">
+                ${req.require} #{req.value}
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="affiche_Column">
+        affiche.id as Affiche0
+        ,affiche.code as Affiche1
+        ,affiche.title as Affiche2
+        ,affiche.content as Affiche3
+        ,affiche.publisher as Affiche4
+        ,affiche.publishTime as Affiche5
+        ,affiche.startTime as Affiche6
+        ,affiche.endTime as Affiche7
+    </sql>
+
+    <select id="getAfficheRowCount" parameterType="com.sl.common.Assist" resultType="java.lang.Long">
+        select count(id) from affiche
+        <if test="require!=null"><include refid="Assist" /></if>
+    </select>
+    <select id="selectAffiche" parameterType="com.sl.common.Assist"  resultMap="result_Affiche_Map">
+        select  <if test="distinct !=null">${distinct}</if>
+        <choose>
+            <when test="resultColumn!=null">${resultColumn}</when>
+            <otherwise>
+        <include refid="affiche_Column" /> 
+            </otherwise>
+        </choose>
+        from affiche
+        <if test="require!=null"><include refid="Assist" /></if>
+        <if test="order !=null">${order}</if>
+        <if test="rowSize !=null"> LIMIT #{rowSize} <if test="startRow !=null"> OFFSET #{startRow}</if></if>
+    </select> 
+
+    <select id="selectAfficheById" parameterType="java.lang.Long" resultMap="result_Affiche_Map">
+        select 
+            <include refid="affiche_Column" /> 
+        from affiche
+        where affiche.id = #{id}
+    </select> 
+
+
+    <insert id="insertAffiche" parameterType="com.sl.pojo.Affiche" useGeneratedKeys="true" keyProperty="id">
+        insert into affiche(id,code,title,content,publisher,publishTime,startTime,endTime) 
+        values(#{id},#{code},#{title},#{content},#{publisher},#{publishTime},#{startTime},#{endTime})
+    </insert>
+
+    <insert id="insertNonEmptyAffiche" parameterType="com.sl.pojo.Affiche">
+        insert into affiche
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="code != null">code,</if>
+            <if test="title != null">title,</if>
+            <if test="content != null">content,</if>
+            <if test="publisher != null">publisher,</if>
+            <if test="publishTime != null">publishTime,</if>
+            <if test="startTime != null">startTime,</if>
+            <if test="endTime != null">endTime,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null"> #{id},</if>
+            <if test="code != null"> #{code},</if>
+            <if test="title != null"> #{title},</if>
+            <if test="content != null"> #{content},</if>
+            <if test="publisher != null"> #{publisher},</if>
+            <if test="publishTime != null"> #{publishTime},</if>
+            <if test="startTime != null"> #{startTime},</if>
+            <if test="endTime != null"> #{endTime},</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteAfficheById" parameterType="java.lang.Long">
+        delete from affiche
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteAffiche" parameterType="com.sl.common.Assist">
+        delete from affiche
+        <if test="require!=null"><include refid="Assist" /></if>
+    </delete>
+
+    <update id="updateAfficheById" parameterType="com.sl.pojo.Affiche">
+        update affiche set
+            code=#{code}
+            ,title=#{title}
+            ,content=#{content}
+            ,publisher=#{publisher}
+            ,publishTime=#{publishTime}
+            ,startTime=#{startTime}
+            ,endTime=#{endTime}
+        where id=#{id}
+    </update>
+
+    <update id="updateNonEmptyAfficheById" parameterType="com.sl.pojo.Affiche">
+        update affiche
+        <set>
+            <if test="code != null">
+                code=#{code},
+            </if>
+            <if test="title != null">
+                title=#{title},
+            </if>
+            <if test="content != null">
+                content=#{content},
+            </if>
+            <if test="publisher != null">
+                publisher=#{publisher},
+            </if>
+            <if test="publishTime != null">
+                publishTime=#{publishTime},
+            </if>
+            <if test="startTime != null">
+                startTime=#{startTime},
+            </if>
+            <if test="endTime != null">
+                endTime=#{endTime},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="updateAffiche" parameterType="map">
+        update affiche
+        <set>
+                id=#{enti.id},
+                code=#{enti.code},
+                title=#{enti.title},
+                content=#{enti.content},
+                publisher=#{enti.publisher},
+                publishTime=#{enti.publishTime},
+                startTime=#{enti.startTime},
+                endTime=#{enti.endTime},
+        </set>
+        <if test="assist.require!=null"><include refid="updateAssist" /></if>
+    </update>
+
+    <update id="updateNonEmptyAffiche" parameterType="map">
+        update affiche
+        <set>
+            <if test="enti.id != null">
+                id=#{enti.id},
+            </if>
+            <if test="enti.code != null">
+                code=#{enti.code},
+            </if>
+            <if test="enti.title != null">
+                title=#{enti.title},
+            </if>
+            <if test="enti.content != null">
+                content=#{enti.content},
+            </if>
+            <if test="enti.publisher != null">
+                publisher=#{enti.publisher},
+            </if>
+            <if test="enti.publishTime != null">
+                publishTime=#{enti.publishTime},
+            </if>
+            <if test="enti.startTime != null">
+                startTime=#{enti.startTime},
+            </if>
+            <if test="enti.endTime != null">
+                endTime=#{enti.endTime},
+            </if>
+        </set>
+        <if test="assist.require!=null"><include refid="updateAssist" /></if>
+    </update>
+
+</mapper>

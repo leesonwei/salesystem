@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sl.dao.usercash.UserCashMapper">
+   <insert id="add" parameterType="userCash">
+      insert into user_cash(cash_time,cash_num,user_id,cash_PV,currency,cash_money,
+      note,fee,tax,other_fee,bank_name,bank_brance,bank_account,
+      account_name,stat,credited_money,credited_time,operator)
+      values(#{cash_time},#{cash_num},#{user_id},#{cash_PV},#{currency},#{cash_money},#{note},#{fee},
+      #{tax},#{other_fee},#{bank_name},#{bank_brance},#{bank_account},#{account_name},
+      #{stat},#{credited_money},#{credited_time},#{operator})
+   </insert>
+   
+     <select id="getUserCashCount" parameterType="map" resultType="int">
+    select count(*) from user_cash
+    where user_id=#{user_id}     
+      <if test="queryStartTime != null and queryStartTime != '' and queryEndTime != null and queryEndTime != ''">
+         and <![CDATA[CASH_TIME<=#{queryEndTime} and CASH_TIME>=#{queryStartTime}]]>
+      </if>
+  </select>
+  
+   <select id="getUserCashList" parameterType="map" resultType="UserCash">
+     select*from user_cash where user_id=#{user_id}
+        <if test="queryStartTime != null and queryStartTime != '' and queryEndTime != null and queryEndTime != ''">
+         and <![CDATA[CASH_TIME<=#{queryEndTime} and CASH_TIME>=#{queryStartTime}]]>
+        </if>
+         order by CASH_TIME desc limit #{starNum},#{pageSize}
+   </select>
+</mapper>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sl.dao.information2.LeaveMessageMapper">
+    <resultMap id="result_LeaveMessage_Map" type="com.sl.pojo.LeaveMessage">
+        <id column="LeaveMessage0" property="id" />
+        <result column="LeaveMessage1" property="createdBy" />
+        <result column="LeaveMessage2" property="messageCode" />
+        <result column="LeaveMessage3" property="messageTitle" />
+        <result column="LeaveMessage4" property="messageContent" />
+        <result column="LeaveMessage5" property="state" />
+        <result column="LeaveMessage6" property="createTime" />
+    </resultMap>
+
+    <sql id="Assist">
+        <where>
+            <foreach collection="require" item="req" separator=" ">
+                ${req.require} #{req.value}
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="updateAssist">
+        <where>
+            <foreach collection="assist.require" item="req" separator=" ">
+                ${req.require} #{req.value}
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="leave_message_Column">
+        leave_message.id as LeaveMessage0
+        ,leave_message.createdBy as LeaveMessage1
+        ,leave_message.messageCode as LeaveMessage2
+        ,leave_message.messageTitle as LeaveMessage3
+        ,leave_message.messageContent as LeaveMessage4
+        ,leave_message.state as LeaveMessage5
+        ,leave_message.createTime as LeaveMessage6
+    </sql>
+
+    <select id="getLeaveMessageRowCount" parameterType="com.sl.common.Assist" resultType="java.lang.Long">
+        select count(id) from leave_message
+        <if test="require!=null"><include refid="Assist" /></if>
+    </select>
+    <select id="selectLeaveMessage" parameterType="com.sl.common.Assist"  resultMap="result_LeaveMessage_Map">
+        select  <if test="distinct !=null">${distinct}</if>
+        <choose>
+            <when test="resultColumn!=null">${resultColumn}</when>
+            <otherwise>
+        <include refid="leave_message_Column" /> 
+            </otherwise>
+        </choose>
+        from leave_message
+        <if test="require!=null"><include refid="Assist" /></if>
+        <if test="order !=null">${order}</if>
+        <if test="rowSize !=null"> LIMIT #{rowSize} <if test="startRow !=null"> OFFSET #{startRow}</if></if>
+    </select> 
+
+    <select id="selectLeaveMessageById" parameterType="java.lang.Long" resultMap="result_LeaveMessage_Map">
+        select 
+            <include refid="leave_message_Column" /> 
+        from leave_message
+        where leave_message.id = #{id}
+    </select> 
+
+
+    <insert id="insertLeaveMessage" parameterType="com.sl.pojo.LeaveMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into leave_message(id,createdBy,messageCode,messageTitle,messageContent,state,createTime) 
+        values(#{id},#{createdBy},#{messageCode},#{messageTitle},#{messageContent},#{state},#{createTime})
+    </insert>
+
+    <insert id="insertNonEmptyLeaveMessage" parameterType="com.sl.pojo.LeaveMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into leave_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="createdBy != null">createdBy,</if>
+            <if test="messageCode != null">messageCode,</if>
+            <if test="messageTitle != null">messageTitle,</if>
+            <if test="messageContent != null">messageContent,</if>
+            <if test="state != null">state,</if>
+            <if test="createTime != null">createTime,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null"> #{id},</if>
+            <if test="createdBy != null"> #{createdBy},</if>
+            <if test="messageCode != null"> #{messageCode},</if>
+            <if test="messageTitle != null"> #{messageTitle},</if>
+            <if test="messageContent != null"> #{messageContent},</if>
+            <if test="state != null"> #{state},</if>
+            <if test="createTime != null"> #{createTime},</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteLeaveMessageById" parameterType="java.lang.Long">
+        delete from leave_message
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteLeaveMessage" parameterType="com.sl.common.Assist">
+        delete from leave_message
+        <if test="require!=null"><include refid="Assist" /></if>
+    </delete>
+
+    <update id="updateLeaveMessageById" parameterType="com.sl.pojo.LeaveMessage">
+        update leave_message set
+            createdBy=#{createdBy}
+            ,messageCode=#{messageCode}
+            ,messageTitle=#{messageTitle}
+            ,messageContent=#{messageContent}
+            ,state=#{state}
+            ,createTime=#{createTime}
+        where id=#{id}
+    </update>
+
+    <update id="updateNonEmptyLeaveMessageById" parameterType="com.sl.pojo.LeaveMessage">
+        update leave_message
+        <set>
+            <if test="createdBy != null">
+                createdBy=#{createdBy},
+            </if>
+            <if test="messageCode != null">
+                messageCode=#{messageCode},
+            </if>
+            <if test="messageTitle != null">
+                messageTitle=#{messageTitle},
+            </if>
+            <if test="messageContent != null">
+                messageContent=#{messageContent},
+            </if>
+            <if test="state != null">
+                state=#{state},
+            </if>
+            <if test="createTime != null">
+                createTime=#{createTime},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="updateLeaveMessage" parameterType="map">
+        update leave_message
+        <set>
+                id=#{enti.id},
+                createdBy=#{enti.createdBy},
+                messageCode=#{enti.messageCode},
+                messageTitle=#{enti.messageTitle},
+                messageContent=#{enti.messageContent},
+                state=#{enti.state},
+                createTime=#{enti.createTime},
+        </set>
+        <if test="assist.require!=null"><include refid="updateAssist" /></if>
+    </update>
+
+    <update id="updateNonEmptyLeaveMessage" parameterType="map">
+        update leave_message
+        <set>
+            <if test="enti.id != null">
+                id=#{enti.id},
+            </if>
+            <if test="enti.createdby != null">
+                createdBy=#{enti.createdBy},
+            </if>
+            <if test="enti.messagecode != null">
+                messageCode=#{enti.messageCode},
+            </if>
+            <if test="enti.messagetitle != null">
+                messageTitle=#{enti.messageTitle},
+            </if>
+            <if test="enti.messagecontent != null">
+                messageContent=#{enti.messageContent},
+            </if>
+            <if test="enti.state != null">
+                state=#{enti.state},
+            </if>
+            <if test="enti.createtime != null">
+                createTime=#{enti.createTime},
+            </if>
+        </set>
+        <if test="assist.require!=null"><include refid="updateAssist" /></if>
+    </update>
+
+</mapper>

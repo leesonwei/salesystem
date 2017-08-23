@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sl.dao.useraccount.UserAccountMapper">
+  <select id="getAccountUser" parameterType="map" resultType="UserAccount">
+    select*from user_account_201404 where user_id=#{user_id}
+  </select>
+  <insert id="addUserAccount" parameterType="userAccount">
+      insert into user_account_201404(user_id,account_date,stat,base_in,base_out,base_balance,repeat_in,
+                repeat_out,repeat_balance,free_PV,already_PV,buy_PV)
+      values(#{user_id},#{account_date},#{stat},#{base_in},#{base_out},#{base_balance},#{repeat_in},#{repeat_out},
+      #{repeat_balance},#{free_PV},#{already_PV},#{buy_PV})
+  </insert>
+  <delete id="delete" parameterType="map">
+     delete from user_account_201404 where user_id=#{user_id}
+  </delete>
+     <update id="update" parameterType="userAccount">
+	         update user_account_201404
+		     <set>
+		       <if test="account_date!=null">account_date=#{account_date},</if>
+		       <if test="stat!=null">stat=#{stat},</if>
+		       <if test="base_in!=null">base_in=#{base_in},</if>
+		       <if test="base_out!=null">base_out=#{base_out},</if>
+		       <if test="base_balance!=null">base_balance=#{base_balance},</if>
+		       <if test="repeat_in!=null">repeat_in=#{repeat_in},</if>
+		       <if test="repeat_out!=null">repeat_out=#{repeat_out},</if>
+		       <if test="repeat_balance!=null">repeat_balance=#{repeat_balance},</if>
+		       <if test="free_PV!=null">free_PV=#{free_PV},</if>
+		       <if test="already_PV!=null">already_PV=#{already_PV},</if>
+		       <if test="buy_PV!=null">buy_PV=#{buy_PV},</if>
+		     </set>
+		   where user_id=#{user_id}
+	   </update>
+
+</mapper>

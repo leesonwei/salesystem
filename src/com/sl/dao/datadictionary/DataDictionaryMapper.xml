@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sl.dao.datadictionary.DataDictionaryMapper">
+
+    <!-- 获取数据字典列表 -->
+    <select id="getDataDictionary" parameterType="DataDictionary" resultType="DataDictionary">
+          select * from data_dictionary
+          <trim prefix="where" prefixOverrides="and | or">
+               <if test="typeCode !=null">
+                    and typeCode=#{typeCode}
+               </if>
+               <if test="typeName !=null">
+                    and typeName=#{typeName}
+               </if>
+               <if test="id !=null">
+                    and id=#{id}
+               </if>
+          </trim>
+          order by valueId asc
+    </select>
+    
+    <!-- 数据字典分组 -->
+    <select id="getDataDictionaryCategory" resultType="DataDictionary">
+         select * from data_dictionary
+         group by typeCode
+         order by id asc
+    </select>
+    
+    <!-- 获取通过类型名称（类型编码不在指定的范围的）数据字典 -->
+    <select id="getDataDictionaryNotIn" resultType="DataDictionary">
+          select * from data_dictionary
+          where typeCode=#{typeName} and typeCode not in (
+               select typeCode from data_dictionary where typeCode=#{typeCode}
+          )
+    </select>
+    
+    <!-- 获取数据字典的最大类型值 -->
+    <select id="maxValueId" parameterType="DataDictionary" resultType="int">
+          select max(valueId) from data_dictionary where typeCode=#{typeCode}
+    </select>
+    
+    <!-- 通过类型编码或类型值id验证数据字典是否有记录数 -->
+    <select id="typeCodeOrValueIdIsExit" parameterType="DataDictionary" resultType="int">
+          select count(1) from data_dictionary
+          <trim prefix="where" prefixOverrides="and | or">
+				<if test="typeCode != null">
+				  and typeCode = #{typeCode}
+				</if>
+				<if test="valueId != null">
+				  and valueId = #{valueId}
+				</if>
+				<if test="id != null">
+				  and id != #{id}
+				</if>
+			</trim>
+    </select>
+    
+    <!-- 添加数据字典 -->
+    <insert id="addDataDictionary" parameterType="DataDictionary" >
+         insert into data_dictionary (typeCode,typeName,valueId,valueName) 
+		 values(#{typeCode},#{typeName},#{valueId},#{valueName})
+    </insert>
+    
+    <!-- 根据id修改数据字典 -->
+    <update id="modifyDataDictionaryById" parameterType="DataDictionary">
+         update data_dictionary
+         <trim prefix="set" suffixOverrides="," suffix="where id=#{id}">
+                 <if test="typeCode != null"> typeCode = #{typeCode},</if>
+				 <if test="typeName != null"> typeName = #{typeName},</if>
+				 <if test="valueId != null"> valueId = #{valueId},</if>
+				 <if test="valueName != null"> valueName = #{valueName}</if>
+         </trim>
+    </update>
+    
+    <!-- 根据类型编码修改数据字典 -->
+    <update id="modifyDataDictionaryByTypeCode" parameterType="DataDictionary">
+         update data_dictionary set typeCode=#{typeCode},typeName=#{typeName} where typeCode=#{valueName}
+    </update>
+
+    <!-- 删除数据字典 -->
+    <delete id="deleteDataDictionary" parameterType="DataDictionary">
+         delete from data_dictionary
+         <trim prefix="where" prefixOverrides="and | or">
+              <if test="id !=null">
+                  and id=#{id}
+              </if>
+              <if test="typeCode !=null">
+                  and typeCode=#{typeCode}
+              </if>
+         </trim>
+    </delete>
+
+
+</mapper>

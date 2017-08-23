@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sl.dao.goodspackaffiliated.GoodsPackAffiliatedMapper">
+
+    <!-- 根据商品套餐id查询套餐附属表 -->
+    <select id="getGoodsPackAffiliatedListById" parameterType="GoodsPackAffiliated" resultMap="goodsPackAffiliatedList">
+          select * from goods_pack_affiliated a,goods_info g 
+          where a.goodsInfoId=b.id
+          <if test="goodsPackId !=null">
+              and a.goodsPackId=#{goodsPackId}
+          </if>
+    </select>
+    
+    <resultMap type="GoodsPackAffiliated" id="goodsPackAffiliatedList">
+        <result property="id" column="id"/>
+		<result property="goodsPackId" column="goodsPackId"/>
+		<result property="goodsInfoId" column="goodsInfoId"/>
+		<result property="realPrice" column="realPrice"/>
+		<result property="goodsName" column="goodsName"/>
+		<result property="goodsNum" column="goodsNum"/>
+		<result property="unit" column="unit"/>
+    </resultMap>
+    
+    <!-- 添加 -->
+    <insert id="addGoodsPackAffiliated" parameterType="GoodsPackAffiliated">
+         insert into goods_pack_affiliated (goodsPackId,goodsInfoId,goodsNum) 
+         values (#{goodsPackId},#{goodsInfoId},#{goodsNum})
+    </insert>
+    
+    <!-- 更新 -->
+    <update id="modifyGoodsPackAffiliated" parameterType="GoodsPackAffiliated">
+         update goods_pack_affiliated
+         <trim prefix="set" suffixOverrides="," suffix="where goodsPackId=#{goodsPackId}">
+               <if test="goodsPackId !=null"> goodsPackId=#{goodsPackId},</if>
+               <if test="goodsInfoId !=null"> goodsInfoId=#{goodsInfoId},</if>
+               <if test="goodsNum !=null"> goodsNum=#{goodsNum}</if>
+         </trim>
+    </update>
+          
+    <!-- 删除 -->
+    <delete id="deleteGoodPackAffiliated" parameterType="GoodsPackAffiliated">
+          delete from goods_pack_affiliated
+          where goodsPackId=#{goodsPackId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,33 @@
+
+/*主体*/
+body{
+	padding-bottom:40px;
+}
+
+/*侧边栏导航*/
+.sidebar-nav{
+	padding:9px 0;
+}
+
+/*导航栏*/
+.navbar .nav li a{
+	border:0px;
+}
+
+/*清除浮动*/
+.clear{
+	clear:both;
+}
+
+/*模式主体*/
+div .modal-body label{
+	color:black;
+}
+
+/*公告栏等的超级链接的样式*/
+.box-header .box-icon a{
+	width:60px;
+	padding-right:1px;
+	font-size:14px;
+	display:block;
+}
